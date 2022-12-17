@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_bg"
+    tools:context=".MyProfile">
+    >
+
+<LinearLayout
+    android:orientation="vertical"
+    android:gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp">
+
+        <ImageView
+            android:id="@+id/imageView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:onClick="BackFeature"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_arrow_left"
+            app:tint="@color/white" />
+
+        <ImageView
+            android:id="@+id/imageView11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:onClick="HomeFeature"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_baseline_home_24"
+            app:tint="@color/white" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/imgProfile"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="100dp"
+        android:src="@drawable/profilepic" />
+
+        <EditText
+            android:id="@+id/txPfName"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:background="@drawable/search_bg"
+            android:layout_margin="12dp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textSize="15sp"
+            android:text="User Name"
+            ></EditText>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:id="@+id/txPfEmail"
+        android:background="@drawable/search_bg"
+        android:layout_margin="12dp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:text="User Email"
+        ></TextView>
+    <TextView
+        android:id="@+id/txPfMobile"
+    android:layout_width="match_parent"
+    android:layout_height="55dp"
+    android:background="@drawable/search_bg"
+        android:textColor="@color/black"
+    android:layout_margin="12dp"
+    android:textStyle="bold"
+    android:gravity="center"
+    android:text="User Mobile"
+    ></TextView>
+    <EditText
+        android:id="@+id/txPfState"
+    android:layout_width="match_parent"
+    android:layout_height="55dp"
+    android:background="@drawable/search_bg"
+    android:layout_margin="12dp"
+    android:textStyle="bold"
+        android:textSize="15sp"
+    android:gravity="center"
+    android:text="User State"
+    ></EditText>
+    <TextView
+        android:id="@+id/txPfCountry"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:background="@drawable/search_bg"
+        android:textColor="@color/black"
+        android:layout_margin="12dp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:text="India"
+    ></TextView>
+    <TextView
+        android:id="@+id/txPfSubmit"
+        android:layout_width="200dp"
+        android:layout_height="55dp"
+        android:background="@drawable/profile_btn"
+        android:layout_margin="12dp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:text="Update Profile"
+        ></TextView>
+
+
+
+
+
+
+</LinearLayout>
+</ScrollView>
