@@ -8,11 +8,13 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
@@ -21,15 +23,24 @@ import com.example.tradeaaau.R;
 import com.example.tradeaaau.Util.Constants;
 import com.example.tradeaaau.Util.MySharedPrefs;
 import com.example.tradeaaau.adapter.VideoLessonAdapter;
+import com.example.tradeaaau.retrofit.RetrofitResponse;
+import com.example.tradeaaau.retrofit.UserRetrofitClient;
+import com.google.gson.JsonObject;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LessonActivity extends AppCompatActivity implements VideoLessonAdapter.UserVideoVIew, MediaPlayer.OnCompletionListener, VideoLessonAdapter.BookMarkInterface {
+import cn.pedant.SweetAlert.SweetAlertDialog;
+import okhttp3.ResponseBody;
+import retrofit2.Response;
+
+public class LessonActivity extends AppCompatActivity implements VideoLessonAdapter.UserVideoVIew, MediaPlayer.OnCompletionListener, VideoLessonAdapter.BookMarkInterface, RetrofitResponse {
     RecyclerView courseRecyclerView;
     VideoLessonAdapter videoLessonAdapter;
     int currvideo = 0;
@@ -37,27 +48,73 @@ public class LessonActivity extends AppCompatActivity implements VideoLessonAdap
     int position=0;
     JSONArray videoData;
     ProgressDialog progressDialog;
+    Button masBtn;
     List<String> lessonPlaylist=new ArrayList<>();
+    View fullScreenView;
+    static int videoPlayed=0;
+    static boolean flag=false;
+    String id="";
+    Boolean isChecked=false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lesson);
         initViews();
+        masBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            saveLessonProgress();
+            }
+        });
+    }
+
+    private void saveLessonProgress() {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("user_id", MySharedPrefs.getInstance(getApplicationContext()).getString(Constants.L4M_UserId));
+        jsonObject.addProperty("lesson_id", getIntent().getStringExtra("LessonId"));
+        new UserRetrofitClient(this, LessonActivity.this, jsonObject, 123, "wp-json/wp/v2/m_users/finishLesson").callService(true);
+    }
+
+    public void saveInstanceVideo(){
+        MySharedPrefs.getInstance(getApplicationContext()).putString("VideoWatched", String.valueOf(videoView.getCurrentPosition()));
+        fullScreenView.setVisibility(View.VISIBLE);
+        if(flag){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            flag=false;
+        }
+        else{
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            flag=true;
+        }
+        videoView.start();
     }
     private void initViews() {
-
-        position= Integer.parseInt(getIntent().getStringExtra("idx"));
+        fullScreenView=findViewById(R.id.ffview);
+        isChecked=getIntent().getBooleanExtra("isChecked",false);
+        masBtn=findViewById(R.id.markAsBtn);
+        videoView = findViewById(R.id.lessonsvideoView);
         courseRecyclerView = findViewById(R.id.main_course_recycler);
         progressDialog =new ProgressDialog(this);
         progressDialog.create();
         progressDialog.setCancelable(false);
-        progressDialog.setMessage("Fetching progress");
-        progressDialog.show();
-        String VideoJsonArray =getIntent().getStringExtra("lessonVideos");
-        Log.e("LessonActivity", String.valueOf(VideoJsonArray) );
+        if(isChecked){
+            masBtn.setVisibility(View.GONE);
+        }
+        if(!(MySharedPrefs.getInstance(getApplicationContext()).getString("VideoWatched")==null)) {
+            videoView.seekTo(Integer.parseInt(MySharedPrefs.getInstance(getApplicationContext()).getString("VideoWatched")));
+        }
+        String VideoJsonArray = getIntent().getStringExtra("lessonVideos");
         try {
-            videoData=new JSONArray(VideoJsonArray);
-            getCourseContent(videoData);
+            if(VideoJsonArray!=null) {
+                position= Integer.parseInt(getIntent().getStringExtra("idx"));
+                videoData = new JSONArray(VideoJsonArray);
+                getCourseContent(videoData);
+            }
+            else{
+                id=getIntent().getStringExtra("courseId");
+                new UserRetrofitClient(LessonActivity.this, LessonActivity.this,104,"wp-json/wp/v2/m_users/courseLessons?course_id="+id).callService(true);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -65,26 +122,39 @@ public class LessonActivity extends AppCompatActivity implements VideoLessonAdap
 
 
     public void playVideo(String id) {
-        progressDialog.show();
-        videoView = findViewById(R.id.lessonsvideoView);
-        Log.e("LessonActivity", "playVideo: "+id );
-        Uri uri = Uri.parse(id);
-        MediaController mediaController = new MediaController(this);
-        mediaController.setAnchorView(videoView);
-        mediaController.setMediaPlayer(videoView);
-        videoView.setMediaController(mediaController);
-        videoView.setVideoPath(id);
+        try {
+            progressDialog.setMessage("Loading Video ");
+            progressDialog.show();
+            Uri uri = Uri.parse(id.trim());
+            videoView.setVideoURI(uri);
+            videoView.requestFocus();
+            MediaController mediaController = new MediaController(this);
+            mediaController.setMediaPlayer(videoView);
+            videoView.setMediaController(mediaController);
+            mediaController.setAnchorView(videoView);
+            Log.e("LessonActivity", "playVideo: "+uri.toString());
+            progressDialog.show();
+            videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mediaPlayer) {
+                    mediaPlayer.setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT);
+                    progressDialog.cancel();
+                    videoView.start();
+                    fullScreenView.setVisibility(View.VISIBLE);
+                }
+            });
+            fullScreenView.findViewById(R.id.fullscreenimg).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    saveInstanceVideo();
+                }
+            });
+            videoView.setOnCompletionListener(this::onCompletion);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
 
-        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mediaPlayer) {
-
-                mediaPlayer.setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
-                progressDialog.cancel();
-                videoView.start();
-            }
-        });
-        videoView.setOnCompletionListener(this::onCompletion);
     }
     private void getCourseContent(JSONArray lesson){
         try {
@@ -104,13 +174,13 @@ public class LessonActivity extends AppCompatActivity implements VideoLessonAdap
     }
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
+        fullScreenView.setVisibility(View.GONE);
         AlertDialog.Builder obj = new AlertDialog.Builder(this);
         obj.setTitle("Playback Finished!");
         obj.setIcon(R.mipmap.ic_launcher);
         LessonActivity.MyListener m = new LessonActivity.MyListener();
         obj.setPositiveButton("Replay", m);
-        obj.setNegativeButton("Next", m);
-        obj.setMessage("Want to replay or play next video?");
+        obj.setMessage("Want to replay ?");
         obj.show();
     }
 
@@ -122,7 +192,48 @@ public class LessonActivity extends AppCompatActivity implements VideoLessonAdap
 
     @Override
     public void SaveBookmark(String lessonName) {
-        MySharedPrefs.getInstance(getApplicationContext()).addTask(Constants.L4M_Favourite,"Lesson Name: "+getIntent().getStringExtra("LessonName")+"\n"+"Notes: "+lessonName);
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("user_id", MySharedPrefs.getInstance(getApplicationContext()).getString(Constants.L4M_UserId));
+        jsonObject.addProperty("course_id", getIntent().getStringExtra("course_id"));
+        jsonObject.addProperty("lesson_id", getIntent().getStringExtra("LessonId"));
+        jsonObject.addProperty("notes","Lesson Name: " + getIntent().getStringExtra("LessonName") + "\nNote: " + lessonName);
+        new UserRetrofitClient(this, LessonActivity.this, jsonObject, 121, "wp-json/wp/v2/m_users/saveBookmark").callService(true);
+    }
+
+    @Override
+    public void onServiceResponse(int requestCode, Response<ResponseBody> response) {
+        switch (requestCode){
+            case 121:
+                if(response.isSuccessful())
+                {
+                    new SweetAlertDialog(LessonActivity.this)
+                            .setTitleText("BookMark has been saved successfully")
+                            .show();
+                }
+                break;
+            case 123:
+                if(response.isSuccessful())
+                {
+                    new SweetAlertDialog(LessonActivity.this)
+                            .setTitleText("Lesson Marked as Completed!")
+                            .show();
+                }
+                break;
+            case 104:
+                if(response.isSuccessful())
+                {
+                    try {
+                        JSONObject result1 = new JSONObject(response.body().string());
+                        getCourseContent(result1.getJSONArray("videos"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                break;
+        }
     }
 
     class MyListener implements DialogInterface.OnClickListener {
@@ -143,6 +254,19 @@ public class LessonActivity extends AppCompatActivity implements VideoLessonAdap
     }
     public void BackFeature(View view) {
         finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        progressDialog.dismiss();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        progressDialog.dismiss();
     }
 
 }

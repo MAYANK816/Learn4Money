@@ -45,9 +45,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class UserRetrofitClient {
 
-    private ProgressDialog pd;
+
     private String url;
     private int requestCode;
+    private Dialog dialog_new;
     private RetrofitResponse result;
     private JsonObject postParam;
     private Call<ResponseBody> call;
@@ -129,22 +130,23 @@ public class UserRetrofitClient {
     public void callService(boolean dialog) {
         try
         {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB)
-            {
-                pd = new ProgressDialog(new ContextThemeWrapper(mContext, android.R.style.Theme_Holo_Light_Dialog));
-            }
-            else {
-                pd = new ProgressDialog(mContext);
-            }
-
-            pd.setMessage("Loading...");
-            pd.setCancelable(false);
-            pd.setCanceledOnTouchOutside(false);
-
+//            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB)
+//            {
+                dialog_new= new Dialog(mContext);
+                dialog_new.setCancelable(false);
+                dialog_new.setContentView(R.layout.loading_layout);
+                int width = WindowManager.LayoutParams.MATCH_PARENT;
+                int height = WindowManager.LayoutParams.WRAP_CONTENT;
+                dialog_new.getWindow().setLayout(width, height);
+                dialog_new.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                WindowManager.LayoutParams params = dialog_new.getWindow().getAttributes();
+                params.gravity = Gravity.CENTER;
+                dialog_new.setCanceledOnTouchOutside(true);
 
             if (dialog)
             {
-                pd.show();
+
+                dialog_new.show();
             }
 
             Gson gson = new GsonBuilder()
@@ -168,14 +170,16 @@ public class UserRetrofitClient {
 
             Log.e("url ", url);
 
-            if (url.contains("login") || url.contains("courses") || url.contains("courseLessons") || url.contains("state")|| url.contains("getquiz")){
+            if (url.contains("login") || url.contains("courses") ||
+                    url.contains("courseLessons") || url.contains("state")||
+                    url.contains("getquiz")|| url.contains("showQuizResult")||
+                    url.contains("finishLessonIds") ||url.contains("showBookmark")){
                 Log.e("get service ", "service ");
                 call = retrofitService.callGetService(url);
             }
             else{
                 Log.e("POST register ", "service ");
                 Log.e("url post ", url);
-                Log.e("postParam ", postParam.toString());
                 call = retrofitService.postRawJSON(url,postParam);
             }
             // for single image
@@ -189,22 +193,22 @@ public class UserRetrofitClient {
                         {
                             Log.e("InsideRequestCode",requestCode+"");
                             result.onServiceResponse(requestCode, response);
-                            pd.cancel();
+                            dialog_new.show();
                         }
                         else
                         {
                                 Constants.alertDialog(mContext, "Error");
                         }
-                        if (pd.isShowing()) {
-                            pd.cancel();
+                        if (dialog_new.isShowing()) {
+                            dialog_new.cancel();
                         }
 
                 }
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
 
-                    if (pd.isShowing()) {
-                        pd.cancel();
+                    if (dialog_new.isShowing()) {
+                        dialog_new.cancel();
                     }
                     call.cancel();
                     t.printStackTrace();
@@ -231,7 +235,7 @@ public class UserRetrofitClient {
                 @Override
                 public void onClick(DialogInterface arg0, int arg1) {
 //                if (!url.contains(Constant.MAKE_PAYMENT)) {
-                    pd.show();
+                    dialog_new.show();
 //                }
                     call.clone().enqueue(callbackk);
                 }

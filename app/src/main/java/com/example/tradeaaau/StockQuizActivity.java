@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -13,8 +12,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.tradeaaau.model.QuestionPair;
-import com.example.tradeaaau.other.Constants;
-import com.example.tradeaaau.other.Utils;
+import com.example.tradeaaau.other.Quiz_Constants;
 import com.example.tradeaaau.retrofit.RetrofitResponse;
 import com.example.tradeaaau.retrofit.UserRetrofitClient;
 
@@ -75,9 +73,9 @@ public class StockQuizActivity extends AppCompatActivity implements RetrofitResp
                     displayNextQuestions();
                 }else{
                     Intent intentResult = new Intent(StockQuizActivity.this,FinalResultActivity.class);
-                    intentResult.putExtra(Constants.SUBJECT,getString(R.string.math));
-                    intentResult.putExtra(Constants.CORRECT,correctQuestion);
-                    intentResult.putExtra(Constants.INCORRECT,Constants.QUESTION_SHOWING - correctQuestion);
+                    intentResult.putExtra(Quiz_Constants.SUBJECT,getString(R.string.math));
+                    intentResult.putExtra(Quiz_Constants.CORRECT,correctQuestion);
+                    intentResult.putExtra(Quiz_Constants.INCORRECT, Quiz_Constants.QUESTION_SHOWING - correctQuestion);
                     intentResult.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intentResult);
                     finish();

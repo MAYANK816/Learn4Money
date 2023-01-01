@@ -89,7 +89,8 @@ public class VideoLessonAdapter extends RecyclerView.Adapter<VideoLessonAdapter.
             @Override
             public void onClick(View view) {
                 Log.e("courseAdapter", lessons.get(position) );
-               userVideoVIew.playVideo(lessons.get(position));
+                String url=lessons.get(position);
+               userVideoVIew.playVideo(url);
             }
         });
 
@@ -103,7 +104,7 @@ public class VideoLessonAdapter extends RecyclerView.Adapter<VideoLessonAdapter.
 //                    @Override
 //                    public void onClick(DialogInterface dialogInterface, int i) {
 //                        Gson gson =new Gson();
-//                        MySharedPrefs.getInstance(context.getApplicationContext()).addTask(Constants.L4M_Favourite,lessons.get(position));
+//                        MySharedPrefs.getInstance(context.getApplicationContext()).addTask(Quiz_Constants.L4M_Favourite,lessons.get(position));
 //                    }
 //                });
 //                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

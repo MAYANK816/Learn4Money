@@ -1,41 +1,44 @@
 package com.example.tradeaaau;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.TextView;
+
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.tradeaaau.adapter.HistoryAdapter;
-import com.example.tradeaaau.data.Attempt;
-import com.example.tradeaaau.data.UserDatabase;
-import com.example.tradeaaau.data.UserDatabaseClient;
-import com.example.tradeaaau.data.UserWithAttempts;
+import com.example.tradeaaau.Util.Constants;
+import com.example.tradeaaau.Util.MySharedPrefs;
+
+import com.example.tradeaaau.adapter.UserHistoryAdapter;
+
+import com.example.tradeaaau.model.QuizHistory;
+import com.example.tradeaaau.retrofit.RetrofitResponse;
+import com.example.tradeaaau.retrofit.UserRetrofitClient;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
-public class HistoryActivity extends AppCompatActivity {
+import okhttp3.ResponseBody;
+import retrofit2.Response;
 
-    private RecyclerView rvHistory;
-    private List<UserWithAttempts> userWithAttempts;
-    private TextView tvTotalPoints, tvTotalQuestions;
-
+public class HistoryActivity extends AppCompatActivity implements RetrofitResponse {
+     RecyclerView recyclerView;
+     List<QuizHistory> userHistory= new ArrayList<>();
+     UserHistoryAdapter userHistoryAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_history);
-
-        rvHistory = findViewById(R.id.rvHistory);
-        tvTotalQuestions = findViewById(R.id.tvTotalQuestionsHistory);
-        tvTotalPoints = findViewById(R.id.tvOverAllPointsHistory);
-
+        recyclerView = findViewById(R.id.rvHistoryRecyclerView);
+        new UserRetrofitClient(this,HistoryActivity.this,120,"wp-json/wp/v2/m_users/showQuizResult?user_id="+ MySharedPrefs.getInstance(getApplicationContext()).getString(Constants.L4M_UserId)).callService(true);
         findViewById(R.id.imageViewHistory).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -43,58 +46,43 @@ public class HistoryActivity extends AppCompatActivity {
             }
         });
 
-//        String email = SharedPref.getInstance().getUser(this).getEmail();
-        String email="xyz@gmail.com";
-        GetAllUserAttemptTask getAllUserAttemptTask = new GetAllUserAttemptTask(email);
-        getAllUserAttemptTask.execute();
+
+
     }
 
+    @Override
+    public void onServiceResponse(int requestCode, Response<ResponseBody> response) {
+        switch (requestCode){
+            case 120:
+             if(response.isSuccessful())
+             {
+                 try {
+                     JSONObject result1 = new JSONObject(response.body().string());
+                     fetchData(result1.getJSONArray("data"));
+                 } catch (Exception e) {
+                     e.printStackTrace();
+                 }
 
-    class GetAllUserAttemptTask extends AsyncTask<Void, Void, Void> {
-
-        private final String email;
-        ArrayList<Attempt> attempts = new ArrayList<>();
-
-        public GetAllUserAttemptTask(String email) {
-            this.email = email;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            UserDatabase databaseClient = UserDatabaseClient.getInstance(getApplicationContext());
-            attempts = (ArrayList<Attempt>) databaseClient.userDao().getUserAndAttemptsWithSameEmail(email);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            int overallPoints = 0;
-
-            for (Attempt userWithAttempts : attempts) {
-                overallPoints += userWithAttempts.getEarned();
-            }
-
-            tvTotalQuestions.setText(String.valueOf(attempts.size()));
-            tvTotalPoints.setText(String.valueOf(overallPoints));
-
-            Collections.sort(attempts, new AttemptCreatedTimeComparator());
-
-            HistoryAdapter adapter = new HistoryAdapter(attempts);
-            rvHistory.setAdapter(adapter);
-
-
+             }
+                break;
         }
     }
 
-    public class AttemptCreatedTimeComparator implements Comparator<Attempt> {
-
-        @Override
-        public int compare(Attempt attempt, Attempt t1) {
-            return String.valueOf(t1.getCreatedTime()).compareTo(String.valueOf(attempt.getCreatedTime()));
+    private void fetchData(JSONArray data) {
+        try {
+        for(int i=0;i<data.length();i++)
+        {
+                JSONObject jb=new JSONObject(data.get(i).toString());
+                QuizHistory quizHistory=new QuizHistory(jb.getString("id"), jb.getString("time"),jb.getString("user_ID"),jb.getString("quiz_ID"),jb.getString("quiz_result"),jb.getString("score_percent"),jb.getString("course_id"),jb.getString("course_name"));
+                userHistory.add(quizHistory);
+        }
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+            recyclerView.setLayoutManager(layoutManager);
+            userHistoryAdapter = new UserHistoryAdapter(this, userHistory);
+            recyclerView.setAdapter(userHistoryAdapter);
+            userHistoryAdapter.notifyDataSetChanged();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
-
-
 }

@@ -40,6 +40,7 @@ public class Drawer extends AppCompatActivity implements View.OnClickListener
 
     @Override
     public void setContentView(int layoutResID) {
+
         view = getLayoutInflater().inflate(R.layout.activity_drawer, null);
         frame = (FrameLayout) view.findViewById(R.id.frame);
         getLayoutInflater().inflate(layoutResID, frame, true);
@@ -161,15 +162,9 @@ public class Drawer extends AppCompatActivity implements View.OnClickListener
                 finishAffinity();
                 break;
             case R.id.llBookmark:
-                String json1 = MySharedPrefs.getInstance(getApplicationContext()).getString(Constants.L4M_Favourite);
-                if(json1!=null)
-                {
+
                     intent = new Intent(Drawer.this, BookMarkActivity.class);
                     startActivity(intent);
-                }
-                else{
-                    Constants.alertDialog(this,"You Haven't Saved Any BookMark");
-                }
                 break;
 
             case R.id.yourclass:

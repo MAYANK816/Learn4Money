@@ -23,6 +23,7 @@
         tools:targetApi="31">
         <activity
             android:name=".ClassFeatures.LessonActivity"
+
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -116,13 +117,6 @@
         </activity>
         <activity
             android:name=".QuizActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".QuizOptionActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

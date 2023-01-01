@@ -30,13 +30,14 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.CourseView
     Context context;
     List<Lesson> lessons;
     JSONArray video;
-    ProgressInterace progressInterace;
-
-    public LessonAdapter(Context context, List<Lesson> lessons, JSONArray video,ProgressInterace progressInterace) {
+//    ProgressInterace progressInterace;
+    String id;
+    public LessonAdapter(Context context, List<Lesson> lessons, JSONArray video,String id) {
         this.context = context;
         this.lessons = lessons;
         this.video=video;
-        this.progressInterace=progressInterace;
+        this.id=id;
+
     }
 
     @NonNull
@@ -56,14 +57,12 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.CourseView
 
         holder.contentTime.setText(lessons.get(position).getTime());
 
-
         if(lessons.get(position).getChecked()==true) {
             Glide.with(context).load(R.drawable.check).into(holder.progressBox);
-            progressInterace.SaveProgress(lessons.get(position).getID());
         }
 
         if(lessons.get(position).getName().length()>30) {
-            holder.contentName.setText(lessons.get(position).getName().substring(0, 25) + ".....");
+            holder.contentName.setText(lessons.get(position).getName().substring(0, 30) + ".....");
         }
         else {
             holder.contentName.setText(lessons.get(position).getName());
@@ -71,24 +70,18 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.CourseView
             holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Log.e("LessonAdapter", lessons.get(position).getID());
-                if(lessons.get(position).getChecked()==false) {
-                    Glide.with(context).load(R.drawable.check).into(holder.progressBox);
-                    lessons.get(position).setChecked(true);
-                    progressInterace.SaveProgress(lessons.get(position).getID());
-                }
-
                 Intent i=new Intent(context, LessonActivity.class);
                 i.putExtra("idx",String.valueOf(position));
+                i.putExtra("course_id",id);
+                i.putExtra("isChecked",lessons.get(position).getChecked());
                 i.putExtra("LessonName",lessons.get(position).getName());
+                i.putExtra("LessonId",lessons.get(position).getID());
                 i.putExtra("lessonVideos", String.valueOf(video));
                 context.startActivity(i);
-
             }
         });
 
     }
-
     @Override
     public int getItemCount() {
         return lessons.size();
@@ -108,8 +101,8 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.CourseView
 
         }
     }
-    public interface ProgressInterace{
-        void SaveProgress(String id);
-    }
+//    public interface ProgressInterace{
+//        void SaveProgress(String id);
+//    }
 
 }

@@ -1,6 +1,6 @@
 package com.example.tradeaaau.other;
 
-public class Constants {
+public class Quiz_Constants {
 
     public static final String USER = "user";
     public static final String QuizID = "QuizID";

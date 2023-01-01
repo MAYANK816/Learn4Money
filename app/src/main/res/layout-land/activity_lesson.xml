@@ -1,17 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollView4"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="3dp"
+    android:contentDescription="@string/app_name"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/videoFrame"
     tools:context=".ClassFeatures.LessonActivity">
+    
+<androidx.constraintlayout.widget.ConstraintLayout
+   android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
+        android:layout_height="55dp"
+        android:id="@+id/vv_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -26,8 +35,7 @@
             android:onClick="BackFeature"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_arrow_left"
-            app:tint="@color/black" />
+            app:srcCompat="@drawable/ic_arrow_left" />
 
         <ImageView
             android:id="@+id/imageView11"
@@ -39,7 +47,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_baseline_home_24" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <include
@@ -47,9 +54,10 @@
         layout="@layout/videoviewplayer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/vv_toolbar" />
 
     <FrameLayout
         android:id="@+id/videoFrame"
@@ -60,7 +68,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_centerInParent="true"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ffview">
@@ -68,66 +76,57 @@
         <VideoView
             android:id="@+id/lessonsvideoView"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_220sdp"
+            android:layout_height="350dp"
             android:layout_marginTop="10dp"
+            android:fitsSystemWindows="true"
             app:layout_constraintDimensionRatio="6:6"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+
     </FrameLayout>
 
-    <ScrollView
-        android:id="@+id/scrollView4"
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/playlistctx"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="@dimen/_5sdp"
-        android:layout_marginBottom="4dp"
+        android:layout_height="match_parent"
         android:background="@drawable/layout_bg"
-        android:contentDescription="@string/app_name"
-        app:layout_constraintBottom_toTopOf="@+id/markAsBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/videoFrame">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/vv_toolbar"
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="261dp"
+            android:fontFamily="@font/nunito_sans_semibold"
+            android:text="Lesson Videos"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/main_course_recycler"
             android:layout_width="match_parent"
-            android:layout_height="0dp">
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
-            <TextView
-                android:id="@+id/textView5"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:text="Lesson Videos"
-                android:textColor="@color/white"
-                android:textSize="18sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/main_course_recycler"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView5"
-                tools:itemCount="15"
-                tools:listitem="@layout/video_lesson_row_items" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
+        <!--   yt player-->
 
-    <Button
-        android:id="@+id/markAsBtn"
-        android:layout_width="0dp"
-        android:layout_height="45dp"
-        android:background="@drawable/corner_radius_color_white"
-        android:text="Mark As Read"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+
+   
 </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

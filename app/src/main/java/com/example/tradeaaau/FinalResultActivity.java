@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.tradeaaau.data.Attempt;
 import com.example.tradeaaau.data.UserDatabase;
 import com.example.tradeaaau.data.UserDatabaseClient;
-import com.example.tradeaaau.other.Constants;
+import com.example.tradeaaau.other.Quiz_Constants;
 import com.example.tradeaaau.other.Utils;
 
 import java.util.Calendar;
@@ -29,12 +28,12 @@ public class FinalResultActivity extends AppCompatActivity {
         setContentView(R.layout.activity_final_result);
 
         Intent intent = getIntent();
-        int correctAnswer = intent.getIntExtra(Constants.CORRECT, 0);
-        int incorrectAnswer = intent.getIntExtra(Constants.INCORRECT, 0);
-        String subject = intent.getStringExtra(Constants.SUBJECT);
+        int correctAnswer = intent.getIntExtra(Quiz_Constants.CORRECT, 0);
+        int incorrectAnswer = intent.getIntExtra(Quiz_Constants.INCORRECT, 0);
+        String subject = intent.getStringExtra(Quiz_Constants.SUBJECT);
 //        String email = SharedPref.getInstance().getUser(this).getEmail();
         String email="xyz@gmail.com";
-        int earnedPoints = (correctAnswer * Constants.CORRECT_POINT) - (incorrectAnswer * Constants.INCORRECT_POINT);
+        int earnedPoints = (correctAnswer * Quiz_Constants.CORRECT_POINT) - (incorrectAnswer * Quiz_Constants.INCORRECT_POINT);
 
         tvSubject = findViewById(R.id.textView16);
         tvCorrect = findViewById(R.id.textView19);

@@ -15,7 +15,6 @@ public class Lesson {
     @SerializedName("checked")
     @Expose
     private Boolean checked;
-
     @SerializedName("ID")
     @Expose
     private String ID;

@@ -7,70 +7,42 @@
     android:layout_height="match_parent"
     android:gravity="center_vertical"
     tools:context=".Certification_module.Certificate_Main_Activity">
-
-    <EditText
-        android:id="@+id/username"
-        android:layout_width="0dp"
-        android:layout_height="55dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="72dp"
-        android:layout_marginEnd="24dp"
-        android:paddingStart="8dp"
-        android:paddingEnd="0dp"
-        android:paddingBottom="8dp"
-        android:hint="Name"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        android:background="@drawable/search_bg"
-        android:gravity="center_vertical"
+    <ImageView
+        android:id="@+id/imageView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:onClick="BackFeature"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></EditText>
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_arrow_left"
+        app:tint="@color/white" />
 
-    <EditText
-        android:id="@+id/CourseName"
-        android:layout_width="0dp"
-        android:layout_height="55dp"
-        android:background="@drawable/search_bg"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="48dp"
-        android:layout_marginEnd="24dp"
-        android:hint="CourseName"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:paddingStart="8dp"
-        android:paddingEnd="0dp"
-        android:paddingBottom="8dp"
-        android:gravity="center_vertical"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/CertificateMarks"></EditText>
-
-    <EditText
-        android:id="@+id/CertificateMarks"
-        android:layout_width="0dp"
-        android:layout_height="55dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="53dp"
-        android:layout_marginEnd="24dp"
-        android:background="@drawable/search_bg"
-        android:hint="CertificateMarks"
-        android:paddingStart="8dp"
-        android:paddingEnd="0dp"
-        android:paddingBottom="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/username"></EditText>
-
-    <Button
-        android:layout_width="200dp"
-        android:layout_height="55dp"
-        android:layout_marginStart="106dp"
-        android:layout_marginTop="72dp"
-        android:layout_marginEnd="106dp"
-        android:background="@drawable/buy_button_bg"
-        android:text="Submit"
-        android:id="@+id/creatpdf"
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="11dp"
+        android:layout_marginEnd="273dp"
+        android:fontFamily="@font/nunito_sans_semibold"
+        android:text="Certificates"
         android:textColor="@color/white"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/CourseName"></Button>
+        app:layout_constraintTop_toBottomOf="@+id/imageView7" />
+
+    <ListView
+        android:id="@+id/certificate_listview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="100dp"
+        android:dividerHeight="10.0sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -16,8 +16,10 @@ public class MySharedPrefs {
     private static MySharedPrefs sSharedPrefs;
     private SharedPreferences mPref;
     private SharedPreferences.Editor mEditor;
-    List<String> list;
+    private static List<String> list;
+    private static List<String> certificateList=new ArrayList<>();
     Gson gson=new Gson();
+
     private MySharedPrefs(Context context) {
         mPref = context.getSharedPreferences("Edulearn", Context.MODE_PRIVATE);
     }
@@ -40,17 +42,24 @@ public class MySharedPrefs {
 //        mEditor.commit();
 //    }
     public void addTask(String key,String value) {
+
         if (null == list) {
             list = new ArrayList<String>();
         }
         list.add(value);
-
         // save the task list to preference
         mEditor = mPref.edit();
         mEditor.putString(key, gson.toJson(list));
         mEditor.commit();
     }
+    public void addTaskCertificate(String key,String value) {
 
+        certificateList.add(value);
+        // save the task list to preference
+        mEditor = mPref.edit();
+        mEditor.putString(key, gson.toJson(certificateList));
+        mEditor.commit();
+    }
     public String getString(String key) {
         return mPref.getString(key, null);
     }

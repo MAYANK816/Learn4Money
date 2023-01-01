@@ -1,12 +1,20 @@
 package com.example.tradeaaau;
 
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -17,6 +25,7 @@ import android.widget.Toast;
 import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
+import com.example.tradeaaau.Certification_module.Certificate_Main_Activity;
 import com.example.tradeaaau.ClassFeatures.YourClass;
 import com.example.tradeaaau.Util.Constants;
 import com.example.tradeaaau.Util.MySharedPrefs;
@@ -34,6 +43,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import okhttp3.ResponseBody;
@@ -44,7 +54,7 @@ public class MainActivity extends Drawer implements View.OnClickListener, Retrof
     ImageSlider imageSlider;
     CategoryAdapter categoryAdapter;
     //    SearchView searchView;
-    ProgressDialog progressDialog;
+    public final int REQUEST_CODE = 115;
     List<Category> categoryList=new ArrayList<>();
     BottomNavigationView bottomNavigationView;
     @Override
@@ -53,9 +63,7 @@ public class MainActivity extends Drawer implements View.OnClickListener, Retrof
         setContentView(R.layout.activity_main);
         initViews();
         if (MySharedPrefs.getInstance(getApplicationContext()).getString(Constants.L4M_UserId) == null) {
-            progressDialog.setTitle("Fetching User Details");
             new UserRetrofitClient(this, MainActivity.this, 101, "wp-json/wp/v2/m_users/login/?username=" + MySharedPrefs.getInstance(getApplicationContext()).getString(Constants.L4M_Mobilenumber)).callService(true);
-            progressDialog.cancel();
         }
 
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
@@ -63,19 +71,10 @@ public class MainActivity extends Drawer implements View.OnClickListener, Retrof
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
                switch ( item.getItemId()){
-
                    case R.id.nav_BookMark:
-                       String json = MySharedPrefs.getInstance(getApplicationContext()).getString(Constants.L4M_Favourite);
-                       if(json==null)
-                       {
-                           Constants.alertDialog(MainActivity.this,"No BookMarks are there");
-                       }
-                       else
                     startActivity(new Intent(getApplicationContext(), BookMarkActivity.class));
                     break;
-
                    case R.id.nav_profile:
-
                        startActivity(new Intent(getApplicationContext(), MyProfile.class));
                        break;
                }
@@ -99,18 +98,16 @@ public class MainActivity extends Drawer implements View.OnClickListener, Retrof
 
     private void initViews() {
 //        searchView.clearFocus();
+//        MySharedPrefs.getInstance(MainActivity.this).addTaskCertificate(Constants.L4M_PdfFiles,"Certificate Location: "+ Calendar.getInstance().getTimeInMillis());
+        if (!(ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+        ) {requestAllPermission();}
+
         bottomNavigationView=findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setBackground(null);
         categoryRecyclerView = findViewById(R.id.course_recycler);
         imageSlider = findViewById(R.id.sliderrecycler);
-        progressDialog = new ProgressDialog(this);
-        progressDialog.create();
-        progressDialog.setCancelable(false);
-        progressDialog.setMessage("Fetching progress");
-        progressDialog.show();
         new UserRetrofitClient(this, MainActivity.this,103,"wp-json/wp/v2/m_users/courses").callService(true);
-        progressDialog.cancel();
-
     }
 
 //    private void searchFilterfun(String newText) {
@@ -190,7 +187,6 @@ public class MainActivity extends Drawer implements View.OnClickListener, Retrof
                         Log.e("login", "onServiceResponse: " + result1.getJSONObject("data").getString("user_nicename") + " " + result1.getJSONObject("data").getString("user_email"));
                         MySharedPrefs.getInstance(getApplicationContext()).putString(Constants.L4M_UserId, result1.getJSONObject("data").getString("ID"));
                     }
-
                     MySharedPrefs.getInstance(getApplicationContext()).putString(Constants.L4M_AccountStatus, "True");
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -222,5 +218,25 @@ public class MainActivity extends Drawer implements View.OnClickListener, Retrof
         }
         else
         startActivity(new Intent(this,YourClass.class));
+    }
+
+    private void requestAllPermission() {
+
+        ActivityCompat.requestPermissions(MainActivity.this, new String[]{READ_EXTERNAL_STORAGE,
+                WRITE_EXTERNAL_STORAGE}, REQUEST_CODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(MainActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
+
+            } else {
+                Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

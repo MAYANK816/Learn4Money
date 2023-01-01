@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/backgrondimage"
-    android:weightSum="2"
+    android:background="@color/main_bg"
     tools:context=".MainActivity">
 
     <ScrollView
         android:id="@+id/scrollView3"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
         android:fillViewport="true"
+        android:layout_marginBottom="55dp"
         app:layout_constraintBottom_toTopOf="@+id/coordinatorLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -51,8 +51,8 @@
                 android:id="@+id/textView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
                 android:layout_marginStart="@dimen/_15sdp"
+                android:layout_marginTop="15dp"
                 android:fontFamily="@font/nunito_sans_semibold"
                 android:text="Courses"
                 android:textColor="@color/white"
@@ -68,7 +68,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="5dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView3"
@@ -81,11 +81,9 @@
         android:layout_width="match_parent"
         android:layout_height="95dp"
         android:layout_gravity="bottom"
-        android:layout_weight="1"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_alignParentBottom="true"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scrollView3">
+        >
 
         <com.google.android.material.bottomappbar.BottomAppBar
             android:id="@+id/bottomAppBar"
@@ -123,4 +121,4 @@
             app:layout_anchor="@id/bottomAppBar" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout >
+</RelativeLayout >

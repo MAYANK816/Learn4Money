@@ -1,14 +1,22 @@
 package com.example.tradeaaau;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -17,6 +25,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +45,7 @@ import com.hbb20.CountryCodePicker;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,6 +69,8 @@ public class registerActivity extends AppCompatActivity implements RetrofitRespo
     String city="";
     ArrayList<String> cityList=new ArrayList<>();
     String[] defaultState = {"Select state"};
+    String encodedImage;
+    ImageView imageView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,10 +83,17 @@ public class registerActivity extends AppCompatActivity implements RetrofitRespo
                 checkDetails();
             }
         });
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                imgmethod();
+            }
+        });
     }
 
     private void initViews() {
         lgfname = findViewById(R.id.lgfirstname);
+        imageView=findViewById(R.id.imgProfile);
         lgnumber=findViewById(R.id.llgnumber);
         lglname = findViewById(R.id.lglaststname);
         lgemail = findViewById(R.id.lgemail);
@@ -97,6 +116,40 @@ public class registerActivity extends AppCompatActivity implements RetrofitRespo
                 }
         );
     }
+    private void imgmethod() {
+
+        if((ActivityCompat.checkSelfPermission(
+                this, Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED)){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(new String[]{
+                        Manifest.permission.CAMERA,
+                },123);
+            }
+        }
+        else{
+           Intent camera=new Intent();
+            camera.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(camera,118);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==118&& resultCode==RESULT_OK){
+            Bitmap photo= (Bitmap) data.getExtras().get("data");
+            imageView.setImageBitmap(photo);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            photo.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] b = baos.toByteArray();
+            encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
+            MySharedPrefs.getInstance(getApplicationContext()).putString("image_data",encodedImage);
+        }
+        else{
+            Toast.makeText(this, "could not captured", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void checkDetails() {
         ProgressDialog progressDialog=new ProgressDialog(this);
         progressDialog.create();
@@ -106,23 +159,26 @@ public class registerActivity extends AppCompatActivity implements RetrofitRespo
 
         if(TextUtils.isEmpty(lgemail.getText())){
             Toast.makeText(this,"Please fill Email details",Toast.LENGTH_SHORT).show();
-            progressDialog.dismiss();
+
+        }
+        else if(encodedImage==null){
+            Toast.makeText(this,"Please fill Email details",Toast.LENGTH_SHORT).show();
+
         }
         else if(TextUtils.isEmpty(lgfname.getText()) ){
             Toast.makeText(this,"Please fill First Name details",Toast.LENGTH_SHORT).show();
-            progressDialog.dismiss();
+
         }
         else if(TextUtils.isEmpty(lglname.getText()) ){
             Toast.makeText(this,"Please fill Last Name details",Toast.LENGTH_SHORT).show();
-            progressDialog.dismiss();
+
         }
         else if(TextUtils.isEmpty(lgnumber.getText()) ){
             Toast.makeText(this,"Please fill mobile details",Toast.LENGTH_SHORT).show();
-            progressDialog.dismiss();
+
         }
         else
         {
-
             Log.e("userClick", "checkDetails: " );
             JsonObject postparams=new JsonObject();
 //            postparams.addProperty("username",getIntent().getStringExtra("mobile"));
@@ -134,9 +190,10 @@ public class registerActivity extends AppCompatActivity implements RetrofitRespo
             postparams.addProperty("country","India");
             Log.e("registerparams", postparams.toString());
             new UserRetrofitClient(this, registerActivity.this,postparams,102,"wp-json/wp/v2/m_users/register").callService(true);
-            progressDialog.cancel();
+
 
         }
+        progressDialog.dismiss();
     }
     @Override
     public void onServiceResponse(int requestCode, Response<ResponseBody> response) {

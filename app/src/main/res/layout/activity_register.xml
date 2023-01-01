@@ -72,6 +72,16 @@
 <!--                    android:textSize="16sp" />-->
 <!--            </com.google.android.material.textfield.TextInputLayout>-->
 
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/imgProfile"
+                android:layout_width="106dp"
+                android:layout_height="106dp"
+                android:onClick="UploadImage"
+                android:layout_marginBottom="35dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:src="@drawable/profilepic" />
+
 
             <com.google.android.material.textfield.TextInputLayout
 

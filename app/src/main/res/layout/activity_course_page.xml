@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipeContainer"
+    android:layout_width="match_parent"
+    tools:context=".LessonPage"
+    android:layout_height="wrap_content">
+
+<androidx.constraintlayout.widget.ConstraintLayout
     android:background="@color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -46,22 +53,24 @@
         app:srcCompat="@drawable/ic_baseline_home_24" />
 
 
+
     <ScrollView
         android:id="@+id/scrollView2"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:background="@drawable/layout_bg"
+        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toTopOf="@+id/quiztextv"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lessonProgressBar"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintTop_toBottomOf="@+id/price">
 
         <LinearLayout
             android:id="@+id/constraintLayout2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/layout_bg"
+
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -87,13 +96,16 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/lesson_recycler"
                 android:layout_width="match_parent"
-                android:layout_height="397dp"
+                android:layout_height="match_parent"
                 android:layout_marginTop="8dp"
+                tools:itemCount="8"
+                tools:listitem="@layout/course_list_row_items"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView5"
                 app:layout_constraintVertical_bias="0.0" />
+
 
             <!--        <androidx.constraintlayout.widget.ConstraintLayout-->
             <!--            android:layout_width="0dp"-->
@@ -273,3 +285,4 @@
         app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

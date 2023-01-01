@@ -2,15 +2,20 @@ package com.example.tradeaaau;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,7 +30,9 @@ import com.google.gson.JsonObject;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Random;
 
 import okhttp3.ResponseBody;
@@ -35,6 +42,9 @@ public class MyProfile extends AppCompatActivity implements RetrofitResponse {
     TextView email, mobile, country;
     EditText Name, State;
     TextView Submit;
+//    private int CAMERA_IMAGES_REQUEST=101;
+    Bitmap bitmap;
+    ImageView imageView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,9 +54,14 @@ public class MyProfile extends AppCompatActivity implements RetrofitResponse {
             @Override
             public void onClick(View view) {
                 UpdateMyProfile();
-
             }
         });
+        String previouslyEncodedImage = MySharedPrefs.getInstance(getApplicationContext()).getString("image_data");
+        if(previouslyEncodedImage!=null &&  !previouslyEncodedImage.equalsIgnoreCase("") ){
+            byte[] b = Base64.decode(previouslyEncodedImage, Base64.DEFAULT);
+             bitmap = BitmapFactory.decodeByteArray(b, 0, b.length);
+            imageView.setImageBitmap(bitmap);
+        }
     }
 
     private void UpdateMyProfile() {
@@ -77,7 +92,7 @@ public class MyProfile extends AppCompatActivity implements RetrofitResponse {
     }
 
     private void initViews() {
-
+        imageView=findViewById(R.id.imgProfile);
         Name = findViewById(R.id.txPfName);
         State = findViewById(R.id.txPfState);
         email = findViewById(R.id.txPfEmail);
@@ -88,7 +103,7 @@ public class MyProfile extends AppCompatActivity implements RetrofitResponse {
         email.setText(MySharedPrefs.getInstance(getApplicationContext()).getString(Constants.L4M_Email));
         mobile.setText(MySharedPrefs.getInstance(getApplicationContext()).getString(Constants.L4M_Mobilenumber));
         Submit = findViewById(R.id.txPfSubmit);
-//        country.setText(MySharedPrefs.getInstance(getApplicationContext()).getString(Constants.Country));
+//        country.setText(MySharedPrefs.getInstance(getApplicationContext()).getString(Quiz_Constants.Country));
     }
 
     @Override
@@ -117,13 +132,38 @@ public class MyProfile extends AppCompatActivity implements RetrofitResponse {
                 break;
         }
     }
-
     public void BackFeature(View view) {
         finish();
     }
+
     public void HomeFeature(View view) {
         Intent i=new Intent(MyProfile.this, MainActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
     }
+
+//    public void UploadImage(View view) {
+//        Intent cam_ImagesIntent = new Intent(Intent.ACTION_GET_CONTENT);
+//        cam_ImagesIntent.setType("image/*");
+//        startActivityForResult(cam_ImagesIntent, CAMERA_IMAGES_REQUEST);
+//    }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == CAMERA_IMAGES_REQUEST && resultCode == Activity.RESULT_OK)
+//            try {
+//                if (bitmap != null) {
+//                    bitmap.recycle();
+//                }
+//                InputStream stream = getContentResolver().openInputStream(
+//                        data.getData());
+//                bitmap = BitmapFactory.decodeStream(stream);
+//                stream.close();
+//                imageView.setImageBitmap(bitmap);
+//            } catch (FileNotFoundException e) {
+//                e.printStackTrace();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//    }
 }

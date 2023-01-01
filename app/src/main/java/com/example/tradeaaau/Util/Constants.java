@@ -9,11 +9,9 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.TextView;
-
 import com.example.tradeaaau.R;
-import com.example.tradeaaau.adapter.VideoLessonAdapter;
+
 
 public class Constants {
     public static String L4M_AccountStatus="AccountLogin";
@@ -21,10 +19,13 @@ public class Constants {
     public static String L4M_Email="Email";
     public static String L4M_City="City";
     public static String L4M_Mobilenumber="Mobilenumber";
-    public static String L4M_PdfFiles="PdfFiles";
+    public static String L4M_PdfFiles="L4M_PdfFiles";
     public static String L4M_Favourite="Favourite";
     public static String L4M_Country="Country";
     public static String L4M_UserId="UserId";
+    public static String L4M_user_id="user_id";
+    public static String L4M_QuizId="quiz_Id";
+    public static String L4M_Quizid="quiz_id";
 
     public static void alertWithIntent(final Context context, String msg, final Class className)
     {
@@ -46,7 +47,6 @@ public class Constants {
         btnok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 Intent intent = new Intent(context, className);
                 context.startActivity(intent);
                 dialog.dismiss();
@@ -88,6 +88,8 @@ public class Constants {
 
 
     }
+
+
 
     public static void hideKeyboard(Context context, View view) {
         InputMethodManager inputManager = (InputMethodManager)
